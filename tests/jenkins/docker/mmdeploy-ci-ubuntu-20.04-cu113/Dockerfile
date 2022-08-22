@@ -1,4 +1,4 @@
-ROM nvcr.io/nvidia/tensorrt:22.03-py3
+FROM nvcr.io/nvidia/tensorrt:22.03-py3
 ARG PYTHON_VERSION=3.8
 ARG CUDA=11.3
 ARG ONNXRUNTIME_VERSION=1.8.1
@@ -9,8 +9,8 @@ ARG OPENCV_VERSION==4.5.5.62
 ARG TORCH_VERSION=1.10.0
 ARG TORCHVISION_VERSION=0.11.0
 ARG MMCV_VERSION=1.5.3
-### ARG PPLCV_VERSION=0.7.0
-ARG PPLNN_version=0.8.1
+ARG PPLCV_VERSION=0.7.0
+ARG NCNN_VERSION=20220721
 USER root
 
 
@@ -41,12 +41,19 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O  https://repo.anaconda.com/miniconda/Mini
     /opt/conda/bin/conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython cython typing typing_extensions mkl mkl-include ninja && \
     /opt/conda/bin/conda clean -ya
 
+ENV PATH=/opt/conda/bin:$PATH
+
+### install jdk1.8
+RUN wget https://download.java.net/java/GA/jdk18/43f95e8614114aeaa8e8a5fcf20a682d/36/GPL/openjdk-18_linux-x64_bin.tar.gz &&\
+tar xvf openjdk-18_linux-x64_bin.tar.gz && rm -rf openjdk-18_linux-x64_bin.tar.gz
+ENV JAVA_HOME=/root/workspace/jdk-18
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+
 ### pytorch
 RUN /opt/conda/bin/conda install pytorch==${TORCH_VERSION} torchvision==${TORCHVISION_VERSION} cudatoolkit=${CUDA} -c pytorch
 ENV PATH /opt/conda/bin:$PATH
 
-
-WORKDIR /root/workspace
 ### get onnxruntime
 RUN wget https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_VERSION}/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz \
     && tar -zxvf onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}.tgz &&\
@@ -57,28 +64,13 @@ RUN wget https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTI
 ### install opencv
 RUN /opt/conda/bin/pip install opencv-python==${OPENCV_VERSION}
 
-
-
-### install mmdeploy
-ENV ONNXRUNTIME_DIR=/root/workspace/onnxruntime-linux-x64-${ONNXRUNTIME_VERSION}
-ENV TENSORRT_DIR=/workspace/tensorrt
-ARG VERSION
-RUN git clone https://github.com/open-mmlab/mmdeploy &&\
-    cd mmdeploy &&\
-    if [ -z ${VERSION} ] ; then echo "No MMDeploy version passed in, building on master" ; else git checkout tags/v${VERSION} -b tag_v${VERSION} ; fi &&\
-    git submodule update --init --recursive &&\
-    mkdir -p build &&\
-    cd build &&\
-    cmake -DMMDEPLOY_TARGET_BACKENDS="ort;trt" .. &&\
-    make -j$(nproc) &&\
-    cd .. &&\
-    pip install -e .
-
+### install openmim
+RUN /opt/conda/bin/pip install openmim
 
 ### install ppl.nn
 RUN git clone --recursive https://github.com/openppl-public/ppl.nn.git &&\
     cd ppl.nn &&\
-    git checkout tags/v${PPLNN_VERSION} -b ${PPLNN_VERSION} &&\
+    git checkout tags/v${PPLNN_VERSION} -b ${PPLNN_VERSION} 
 
 ENV pplnn_DIR=/root/workspace/ppl.nn/install/lib/cmake/ppl
 ENV PYTHONPATH=/root/workspace/ppl.nn/install/lib:$PYTHONPATH
@@ -96,9 +88,10 @@ RUN git clone --recursive https://github.com/Tencent/ncnn.git &&\
     /opt/conda/bin/pip install -e . 
 
 
-ARG PPLCV_VERSION=0.7.0
-### build sdk
+### get ppl.cv
+ARG pplcv_DIR=/root/workspace/ppl.cv/cuda-build/install/lib/cmake/ppl
 RUN git clone https://github.com/openppl-public/ppl.cv.git &&\
     cd ppl.cv &&\
     git checkout tags/v${PPLCV_VERSION} -b v${PPLCV_VERSION} &&\
     ./build.sh cuda
+
