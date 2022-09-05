@@ -17,9 +17,10 @@ function getFullName() {
 
 ## parameters
 export codebase=$1
-getFullName $codebas
-# backends=$d2
+getFullName $codebase
+# backends=$2
 
+echo "time-$(date +%Y%m%d%H%M)"
 ## clone ${codebase}
 cd /root/workspace
 git clone https://github.com/open-mmlab/${codebase_fullname}.git
@@ -34,7 +35,9 @@ cmake .. -DMMDEPLOY_BUILD_SDK=ON -DMMDEPLOY_BUILD_EXAMPLES=ON \
         -DMMDEPLOY_BUILD_EXAMPLES=ON -DMMDEPLOY_ZIP_MODEL=ON \
         -DMMDEPLOY_TARGET_BACKENDS="ort;pplnn;openvino;ncnn" \
         -DMMDEPLOY_SHARED_LIBS=OFF \
-        -DONNXRUNTIME_DIR=${ONNXRUNTIME_DIR}
+        -DONNXRUNTIME_DIR=${ONNXRUNTIME_DIR} \
+        -DPPLNN_DIR=${PPLNN_DIR} 
+
 make -j $(nproc) && make install
 cd ../
 conda init bash
@@ -48,9 +51,13 @@ do
     /opt/conda/envs/torch${TORCH_VERSION}/bin/mim install ${codebase}
 
     ## start regression  
-    conda activate torch${TORCH_VERSION}
-    python ./tools/regression_test.py \
-        --codebase ${codebase} \
-        --work-dir "../mmdeploy_regression_working_dir/torch${TORCH_VERSION}"
+    conda run --name torch${TORCH_VERSION} "
+        python ./tools/regression_test.py \
+            --codebase ${codebase} \
+            --work-dir "../mmdeploy_regression_working_dir/${codebase}/torch${TORCH_VERSION}" > convert.log
+    "
+
 
 done
+
+echo "time-$(date +%Y%m%d%H%M)"
