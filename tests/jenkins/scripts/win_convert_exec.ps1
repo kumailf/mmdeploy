@@ -31,7 +31,7 @@ pip install -v $codebase_path
 Write-Host "$pwd"
 #Invoke-Expression -Command "python3 ./tools/regression_test.py --codebase $codebase --device cuda:0 --backends tensorrt onnxruntime --work-dir $log_dir  $exec_performance"
 # python3 ./tools/regression_test.py --codebase $codebase --device cuda:0 --backends tensorrt onnxruntime --work-dir $log_dir  $exec_performance
-python $env:MMDEPLOY_DIR/tools/regression_test.py `
+python $pwd/tools/regression_test.py `
     --codebase $codebase `
     --device cuda:0 `
     --backends tensorrt onnxruntime `
