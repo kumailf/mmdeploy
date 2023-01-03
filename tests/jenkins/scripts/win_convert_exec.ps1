@@ -5,7 +5,7 @@ param(
 )
 $scriptDir = Split-Path -parent $MyInvocation.MyCommand.Path
 Import-Module $scriptDir\utils.psm1
-cd $env:MMDEPLOY_DIR
+#cd $env:MMDEPLOY_DIR
 Write-Host "exec_path: $pwd"
 Write-Host "mim install $codebase"
 Write-Host "codebase_fullname = $codebase_fullname"

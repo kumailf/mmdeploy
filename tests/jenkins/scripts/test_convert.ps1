@@ -6,11 +6,6 @@ $env:ONNXRUNTIME_DIR=(Join-PATH $env:DEPS_DIR onnxruntime-win-x64-1.8.1)
 $env:CUDNN_DIR=(Join-PATH $env:DEPS_DIR cudnn-11.3-v8.2.1.32)
 $env:PPLCV_DIR=(Join-PATH $env:DEPS_DIR ppl.cv)
 
-
-
-
-
-
 $scriptDir = Split-Path -parent $MyInvocation.MyCommand.Path
 Import-Module $scriptDir\utils.psm1
 
