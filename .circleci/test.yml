@@ -4,6 +4,7 @@ version: 2.1
 
 orbs:
   win: circleci/windows@4.1
+  codecov: codecov/codecov@3.2.4
 
 # the default pipeline parameters, which will be updated according to
 # the results of the path-filtering orb
@@ -182,7 +183,8 @@ jobs:
             docker exec mmdeploy mkdir -p mmdeploy_test_resources/transform
             docker exec mmdeploy cp mmdeploy/demo/resources/human-pose.jpg mmdeploy_test_resources/transform
             docker exec mmdeploy ./mmdeploy/build/bin/mmdeploy_tests
-
+      - codecov/upload
+      
   test_windows_onnxruntime:
     parameters:
       version:
