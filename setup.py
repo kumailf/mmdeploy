@@ -2,6 +2,7 @@ import os
 
 from setuptools import find_packages, setup
 
+
 EXT_TYPE = ''
 try:
     from torch.utils.cpp_extension import BuildExtension
