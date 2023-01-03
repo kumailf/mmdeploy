@@ -37,7 +37,7 @@ python $env:MMDEPLOY_DIR/tools/regression_test.py `
     --backends tensorrt onnxruntime `
     --work-dir $log_dir  `
     $exec_performance
-   
+
 if (-not $?) {
     throw "regression_test failed"
 }
