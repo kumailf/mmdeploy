@@ -267,6 +267,7 @@ jobs:
             mkdir -p mmdeploy_test_resources/transform
             cp -rf ./mmdeploy/demo/resources/human-pose.jpg mmdeploy_test_resources/transform
             ./mmdeploy/build/bin/mmdeploy_tests
+            
       - run:
           name: Convert model
           command: |
