@@ -30,7 +30,7 @@ English | [简体中文](README_zh-CN.md)
 
 ## Introduction
 
-MMDeploy is an open-source deep learning model deployment toolset. It is a part of the [OpenMMLab](https://openmmlab.com/) project.
+TmpMMDeploy is an open-source deep learning model deployment toolset. It is a part of the [OpenMMLab](https://openmmlab.com/) project.
 
 <div align="center">
   <img src="resources/introduction.png">
