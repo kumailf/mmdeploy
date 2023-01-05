@@ -28,7 +28,7 @@
 
 [English](README.md) | 简体中文
 
-## 介绍
+## T介绍
 
 TmpMMDeploy 是 [OpenMMLab](https://openmmlab.com/) 模型部署工具箱，**为各算法库提供统一的部署体验**。基于 MMDeploy，开发者可以轻松从训练 repo 生成指定硬件所需 SDK，省去大量适配时间。
 
