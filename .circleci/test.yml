@@ -124,7 +124,7 @@ commands:
             cd ..
 jobs:
   lint:
-    executor: kumailf/lint-orb
+    executor: lint-orb
     steps:
       - lint-orb/lint:
           url: git@github.com:kumailf/mmdeploy.git
