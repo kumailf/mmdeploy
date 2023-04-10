@@ -7,11 +7,11 @@ setup: true
 # the path of an updated fileset
 orbs:
   path-filtering: circleci/path-filtering@0.1.2
-  lint-orb: kumailf/lint-orb@1.0.2
+  lint-orb: kumailf/lint-orb@1.0.3
 
 jobs:
   build:
-    executor: kumailf/lint-orb
+    executor: lint-orb/executor
     steps:
       - lint-orb/lint:
           url: git@github.com:kumailf/mmdeploy.git
