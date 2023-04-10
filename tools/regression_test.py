@@ -622,7 +622,7 @@ def get_backend_result(pipeline_info: dict, model_cfg_path: Path,
                        report_dict: dict, test_type: str,
                        logger: logging.Logger, backend_file_name: [str, list],
                        report_txt_path: Path, metafile_dataset: str,
-                       model_name: str):
+                       model_name: str):    
     """Convert model to onnx and then get metric.
 
     Args:
