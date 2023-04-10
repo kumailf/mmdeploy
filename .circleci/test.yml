@@ -5,7 +5,6 @@ version: 2.1
 orbs:
   win: circleci/windows@4.1
   lint-orb: kumailf/lint-orb@1.0.1
-
 # the default pipeline parameters, which will be updated according to
 # the results of the path-filtering orb
 parameters:
@@ -124,34 +123,32 @@ commands:
             coverage report -m
             cd ..
 jobs:
-  lint-from-orb:
+  lint:
     executor: kumailf/lint-orb
     steps:
       - lint-orb/lint:
           url: git@github.com:kumailf/mmdeploy.git
-
-  lint:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/python:3.7.4
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: Install pre-commit hook
-          command: |
-            pip install pre-commit
-            pre-commit install
-      - run:
-          name: Linting
-          command: pre-commit run --all-files
-      - run:
-          name: Check docstring coverage
-          command: |
-            pip install interrogate
-            interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 80 mmdeploy
+    # # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    # docker:
+    #   - image: cimg/python:3.7.4
+    # # Add steps to the job
+    # # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    # steps:
+    #   - checkout
+    #   - run:
+    #       name: Install pre-commit hook
+    #       command: |
+    #         pip install pre-commit
+    #         pre-commit install
+    #   - run:
+    #       name: Linting
+    #       command: pre-commit run --all-files
+    #   - run:
+    #       name: Check docstring coverage
+    #       command: |
+    #         pip install interrogate
+    #         interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 80 mmdeploy
 
   test_linux_tensorrt:
     executor: ubuntu-2004-cu114
@@ -285,32 +282,29 @@ jobs:
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  lint:
+  pr_stage_lint:
+    when: << pipeline.parameters.lint_only >>
     jobs:
-      - lint-from-orb
-  # pr_stage_lint:
-  #   when: << pipeline.parameters.lint_only >>
-  #   jobs:
-  #     - lint
-  # pr_stage_test:
-  #   when:
-  #     not:
-  #       << pipeline.parameters.lint_only >>
-  #   jobs:
-  #     - lint
-  #     - test_linux_onnxruntime:
-  #         version: 1.8.1
-  #         requires:
-  #           - lint
-  #     - test_windows_onnxruntime:
-  #         version: 1.8.1
-  #         requires:
-  #           - lint
-  #     - hold:
-  #         type: approval
-  #         requires:
-  #           - test_linux_onnxruntime
-  #           - test_windows_onnxruntime
-  #     - test_linux_tensorrt:
-  #         requires:
-  #           - hold
+      - lint
+  pr_stage_test:
+    when:
+      not:
+        << pipeline.parameters.lint_only >>
+    jobs:
+      - lint
+      - test_linux_onnxruntime:
+          version: 1.8.1
+          requires:
+            - lint
+      - test_windows_onnxruntime:
+          version: 1.8.1
+          requires:
+            - lint
+      - hold:
+          type: approval
+          requires:
+            - test_linux_onnxruntime
+            - test_windows_onnxruntime
+      - test_linux_tensorrt:
+          requires:
+            - hold
