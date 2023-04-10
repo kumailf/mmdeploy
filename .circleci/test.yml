@@ -124,31 +124,27 @@ commands:
             cd ..
 jobs:
   lint:
-    executor: lint-orb
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/python:3.7.4
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - lint-orb/lint:
-          url: git@github.com:kumailf/mmdeploy.git
-    # # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    # docker:
-    #   - image: cimg/python:3.7.4
-    # # Add steps to the job
-    # # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    # steps:
-    #   - checkout
-    #   - run:
-    #       name: Install pre-commit hook
-    #       command: |
-    #         pip install pre-commit
-    #         pre-commit install
-    #   - run:
-    #       name: Linting
-    #       command: pre-commit run --all-files
-    #   - run:
-    #       name: Check docstring coverage
-    #       command: |
-    #         pip install interrogate
-    #         interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 80 mmdeploy
+      - checkout
+      - run:
+          name: Install pre-commit hook
+          command: |
+            pip install pre-commit
+            pre-commit install
+      - run:
+          name: Linting
+          command: pre-commit run --all-files
+      - run:
+          name: Check docstring coverage
+          command: |
+            pip install interrogate
+            interrogate -v --ignore-init-method --ignore-module --ignore-nested-functions --ignore-regex "__repr__" --fail-under 80 mmdeploy
 
   test_linux_tensorrt:
     executor: ubuntu-2004-cu114
@@ -282,6 +278,10 @@ jobs:
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
+  lint_from_orb:
+    jobs:
+      - lint-orb/lint:
+        url: git@github.com:kumailf/mmdeploy.git
   pr_stage_lint:
     when: << pipeline.parameters.lint_only >>
     jobs:
