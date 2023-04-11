@@ -6,7 +6,7 @@ setup: true
 # the path-filtering orb is required to continue a pipeline based on
 # the path of an updated fileset
 orbs:
-  lint-orb: kumailf/lint-orb@1.0.10
+  lint-orb: kumailf/lint-orb@1.0.11
 
 jobs:
   build:
