@@ -11,9 +11,8 @@ orbs:
 
 jobs:
   build:
-    executor: 
-      name: cimg/python
-      tag: 3.7.4
+    docker:
+      - image: cimg/python:3.7.4
     steps:
       - lint-orb/lint
 
