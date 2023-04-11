@@ -13,8 +13,8 @@ jobs:
   build:
     executor: lint-orb/executor
     steps:
-      - lint-orb/lint:
-          url: git@github.com:kumailf/mmdeploy.git
+      - lint-orb/lint
+
 
 workflows:
   lint:
