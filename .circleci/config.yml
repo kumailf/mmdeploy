@@ -14,7 +14,7 @@ jobs:
       - image: cimg/python:3.7.4
     steps:
       - lint-orb/lint:
-          url: https://github.com/open-mmlab/mmdeploy.git
+          repo: mmdeploy
 
 workflows:
   lint:
